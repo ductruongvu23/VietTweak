@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>items</key>
+    <array>
+        <!-- Master switch -->
+        <dict>
+            <key>cell</key>
+            <string>PSSwitchCell</string>
+            <key>cellClass</key>
+            <string>PSSwitchCell</string>
+            <key>default</key>
+            <true/>
+            <key>defaults</key>
+            <string>com.viettweak.translate</string>
+            <key>key</key>
+            <string>enabled</string>
+            <key>label</key>
+            <string>Bật dịch</string>
+            <key>PostNotification</key>
+            <string>com.viettweak.translate/ReloadPrefs</string>
+            <key>id</key>
+            <string>enabledCell</string>
+        </dict>
+
+        <!-- Verbose logging -->
+        <dict>
+            <key>cell</key>
+            <string>PSSwitchCell</string>
+            <key>default</key>
+            <false/>
+            <key>defaults</key>
+            <string>com.viettweak.translate</string>
+            <key>key</key>
+            <string>verbose</string>
+            <key>label</key>
+            <string>Ghi log chi tiết</string>
+            <key>PostNotification</key>
+            <string>com.viettweak.translate/ReloadPrefs</string>
+        </dict>
+
+        <!-- Dump untranslated strings toggle -->
+        <dict>
+            <key>cell</key>
+            <string>PSSwitchCell</string>
+            <key>default</key>
+            <false/>
+            <key>defaults</key>
+            <string>com.viettweak.translate</string>
+            <key>key</key>
+            <string>dumpUntranslated</string>
+            <key>label</key>
+            <string>Lưu chuỗi chưa dịch</string>
+            <key>PostNotification</key>
+            <string>com.viettweak.translate/ReloadPrefs</string>
+        </dict>
+
+        <!-- Section header: Actions -->
+        <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>Hành động</string>
+            <key>footerText</key>
+            <string>Sau khi sửa từ điển người dùng, hãy nhấn "Tải lại bản dịch" để áp dụng mà không cần respring.</string>
+        </dict>
+
+        <!-- Reload dictionary -->
+        <dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>label</key>
+            <string>Tải lại bản dịch</string>
+            <key>action</key>
+            <string>reloadDictionary</string>
+        </dict>
+
+        <!-- Open user dictionary -->
+        <dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>label</key>
+            <string>Mở từ điển người dùng</string>
+            <key>action</key>
+            <string>openUserDictionary</string>
+        </dict>
+
+        <!-- Reset user dictionary -->
+        <dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>label</key>
+            <string>Đặt lại từ điển người dùng</string>
+            <key>action</key>
+            <string>resetDictionary</string>
+            <key>cellClass</key>
+            <string>PSButtonCell</string>
+            <key>confirmation</key>
+            <dict>
+                <key>title</key>
+                <string>Đặt lại</string>
+                <key>prompt</key>
+                <string>Xóa toàn bộ bản dịch người dùng?</string>
+                <key>okTitle</key>
+                <string>Đặt lại</string>
+                <key>cancelTitle</key>
+                <string>Hủy</string>
+            </dict>
+        </dict>
+
+        <!-- Respring -->
+        <dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>label</key>
+            <string>Khởi động lại giao diện</string>
+            <key>action</key>
+            <string>respring</string>
+        </dict>
+
+        <!-- Section header: About -->
+        <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>Giới thiệu</string>
+        </dict>
+
+        <dict>
+            <key>cell</key>
+            <string>PSTitleValueCell</string>
+            <key>label</key>
+            <string>Phiên bản</string>
+            <key>value</key>
+            <string>1.0.0</string>
+        </dict>
+
+        <dict>
+            <key>cell</key>
+            <string>PSTitleValueCell</string>
+            <key>label</key>
+            <string>Tác giả</string>
+            <key>value</key>
+            <string>VietTweak</string>
+        </dict>
+
+        <dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>label</key>
+            <string>GitHub</string>
+            <key>action</key>
+            <string>openGitHub</string>
+        </dict>
+    </array>
+</dict>
+</plist>

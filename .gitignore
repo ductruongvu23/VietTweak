@@ -1,0 +1,25 @@
+# Build outputs
+packages/
+obj/
+_.theos/
+.theos/
+build/
+*.deb
+*.ipa
+*.dSYM
+
+# macOS / Linux junk
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Local Theos (if cloned into the project by accident)
+theos/
+sdks/
+
+# CI artifacts
+artifacts/

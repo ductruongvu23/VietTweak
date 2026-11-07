@@ -1,0 +1,115 @@
+name: Build VietTweak
+
+on:
+  push:
+    branches: [ main, master ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache Theos
+        uses: actions/cache@v4
+        with:
+          path: ~/theos
+          key: theos-${{ runner.os }}-v2
+          restore-keys: theos-${{ runner.os }}-
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            clang \
+            lld \
+            ldid \
+            dpkg-dev \
+            fakeroot \
+            git \
+            perl \
+            python3 \
+            rsync \
+            zip \
+            xz-utils \
+            ca-certificates \
+            curl
+
+      - name: Install Theos
+        run: |
+          if [ ! -d "$HOME/theos" ] || [ ! -d "$HOME/theos/.git" ]; then
+            git clone --recursive https://github.com/theos/theos.git "$HOME/theos"
+          else
+            (cd "$HOME/theos" && git pull --ff-only && git submodule update --init --recursive)
+          fi
+
+      - name: Install iOS 15.5 SDK
+        run: |
+          mkdir -p "$HOME/theos/sdks"
+          cd "$HOME/theos/sdks"
+          if [ ! -d "iPhoneOS15.5.sdk" ]; then
+            curl -fL -o sdk.tar.xz \
+              "https://github.com/theos/sdks/raw/master/iPhoneOS15.5.sdk.tar.xz"
+            tar -xf sdk.tar.xz
+            rm -f sdk.tar.xz
+          fi
+          ls -la "$HOME/theos/sdks"
+
+      - name: Build package
+        run: |
+          export THEOS="$HOME/theos"
+          export PATH="$THEOS/bin:$PATH"
+          make clean
+          make package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless
+
+      - name: Collect artifacts
+        run: |
+          mkdir -p artifacts
+          find packages -maxdepth 1 -type f -name '*.deb' -exec cp {} artifacts/ \;
+          # Also zip the .dsym-free dylib + bundle for inspection
+          (cd _/var/jb && zip -r "$GITHUB_WORKSPACE/artifacts/VietTweak-bundle.zip" .)
+          ls -la artifacts
+
+      - name: Upload .deb artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VietTweak-deb
+          path: artifacts/*.deb
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload bundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VietTweak-bundle
+          path: artifacts/VietTweak-bundle.zip
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Get version
+        id: ver
+        run: |
+          VER=$(grep -m1 '^Version:' control | awk '{print $2}')
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "Building version: $VER"
+
+      - name: Create / update release on tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/*.deb
+          name: VietTweak ${{ steps.ver.outputs.version }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,10 @@
+{
+    Filter = {
+        Executables = (
+            "Preferences",
+        );
+        Bundles = (
+            "com.apple.Preferences",
+        );
+    };
+}

@@ -1,0 +1,9 @@
+Package: com.viettweak.translate
+Name: VietTweak
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: Translate other tweaks' preference text into Vietnamese
+Maintainer: VietTweak
+Author: VietTweak
+Section: Tweaks
+Depends: mobilesubstrate, preferenceloader, firmware (>= 15.0)
