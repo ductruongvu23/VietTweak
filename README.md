@@ -10,6 +10,16 @@ VietTweak translates the settings pages of your other jailbreak tweaks into Viet
 
 ## Install
 
+### From the repo (recommended)
+
+Add this source in Sileo or Zebra, then install **VietTweak**. Updates come through your package manager.
+
+```
+https://ductruongvu23.github.io/VietTweak/
+```
+
+### Manually
+
 1. Download the latest `.deb` from [Releases](../../releases/latest).
 2. Install it with Sileo, Zebra or Filza, or over SSH:
    ```bash
@@ -78,7 +88,7 @@ git tag v1.0.1
 git push origin v1.0.1
 ```
 
-CI creates a GitHub Release with the `.deb` attached.
+CI creates a GitHub Release with the `.deb` attached, then rebuilds the APT repo from every release and deploys it to GitHub Pages (`repo` job). To rebuild the repo without a new tag, run the workflow manually from the Actions tab.
 
 The workflow:
 - runs on `ubuntu-latest`
