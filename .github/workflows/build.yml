@@ -31,7 +31,6 @@ jobs:
             build-essential \
             clang \
             lld \
-            ldid \
             dpkg-dev \
             fakeroot \
             git \
@@ -42,6 +41,11 @@ jobs:
             xz-utils \
             ca-certificates \
             curl
+          # ldid is not in Ubuntu 26.04 apt; use the Procursus release binary
+          sudo curl -fL -o /usr/local/bin/ldid \
+            https://github.com/ProcursusTeam/ldid/releases/download/v2.1.5-procursus7/ldid_linux_x86_64
+          sudo chmod +x /usr/local/bin/ldid
+          command -v ldid
 
       - name: Install Theos
         run: |
@@ -51,15 +55,16 @@ jobs:
             (cd "$HOME/theos" && git pull --ff-only && git submodule update --init --recursive)
           fi
 
-      - name: Install iOS 15.5 SDK
+      - name: Install iOS 16.5 SDK
         run: |
           mkdir -p "$HOME/theos/sdks"
           cd "$HOME/theos/sdks"
-          if [ ! -d "iPhoneOS15.5.sdk" ]; then
-            curl -fL -o sdk.tar.xz \
-              "https://github.com/theos/sdks/raw/master/iPhoneOS15.5.sdk.tar.xz"
-            tar -xf sdk.tar.xz
-            rm -f sdk.tar.xz
+          # Makefile targets SDK 16.5; theos/sdks stores SDKs as folders, not tarballs
+          if [ ! -d "iPhoneOS16.5.sdk" ]; then
+            git clone --depth 1 --filter=blob:none --sparse https://github.com/theos/sdks.git /tmp/sdks
+            git -C /tmp/sdks sparse-checkout set iPhoneOS16.5.sdk
+            mv /tmp/sdks/iPhoneOS16.5.sdk .
+            rm -rf /tmp/sdks
           fi
           ls -la "$HOME/theos/sdks"
 

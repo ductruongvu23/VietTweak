@@ -91,7 +91,7 @@ The CI workflow:
 - runs on `ubuntu-latest`
 - installs clang, ldid, dpkg, fakeroot
 - clones Theos into a cache (so subsequent builds are fast)
-- downloads iPhoneOS15.5.sdk
+- downloads iPhoneOS16.5.sdk
 - runs `make package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless`
 - uploads `com.viettweak.translate_*.deb` as an artifact
 - on tag push, creates a GitHub Release with the `.deb` attached
