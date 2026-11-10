@@ -2,47 +2,45 @@
 
 Dịch giao diện cài đặt của các tweak khác sang tiếng Việt.
 
-VietTweak is a rootless jailbreak tweak that hooks `Preferences.app` and translates the UI text of other installed tweaks' preference bundles into Vietnamese. It works by intercepting `UILabel.setText:`, `UIButton.setTitle:forState:`, and `UINavigationItem.setTitle:` calls inside Preferences.app and replacing the original English string with a Vietnamese translation looked up from a JSON dictionary.
+VietTweak là tweak cho jailbreak rootless. Nó chạy bên trong app **Cài đặt** (Preferences.app), chặn các lệnh đặt chữ (`UILabel`, `UIButton`, `UINavigationItem`) và thay chuỗi tiếng Anh bằng bản dịch tiếng Việt lấy từ một từ điển JSON.
 
-- **Target**: iOS 15+ rootless jailbreaks (Dopamine, palera1n, NekoJB)
-- **Build system**: Theos + Logos
-- **Preferences**: full PreferenceLoader bundle with master switch, verbose logging, dump-untranslated mode, reload button, respring button
+- **Hỗ trợ**: iOS 15.0 trở lên, jailbreak rootless (Dopamine, palera1n, NekoJB)
+- **Phụ thuộc**: `mobilesubstrate` (hoặc ElleKit), `preferenceloader`
+- **Chỉ chạy trong app Cài đặt**, không ảnh hưởng app khác
 
-## File layout
+## Cài đặt
 
-```
-VietTweak/
-├── Makefile                            # builds tweak + pref bundle, rootless
-├── control                             # .deb metadata
-├── VietTweak.plist                     # MobileSubstrate filter (Preferences.app only)
-├── Tweak.x                             # Logos hooks + translation lookup
-├── translations.json                   # default EN→VI dictionary (shipped in bundle)
-└── Preferences/
-    ├── VRTRootListController.h         # PSListController subclass
-    ├── VRTRootListController.x         # settings UI + action methods
-    ├── VRTRootListController.plist     # specifier table for the pane
-    └── VietTweakPrefs.plist            # PreferenceLoader entry (root Settings row)
-```
+1. Tải file `.deb` mới nhất ở trang [Releases](../../releases/latest).
+2. Mở bằng Sileo / Zebra / Filza để cài, hoặc qua SSH:
+   ```bash
+   dpkg -i com.viettweak.translate_1.0.0_iphoneos-arm64.deb
+   ```
+3. Respring.
+4. Vào **Cài đặt → VietTweak** và bật **"Bật dịch"**. Tweak mặc định đang tắt cho tới khi bạn bật công tắc này lần đầu.
 
-## How translation works
+## Tùy chọn trong Cài đặt
 
-1. The MobileSubstrate filter (`VietTweak.plist`) loads the dylib **only** into `Preferences.app`. Other apps are not touched.
-2. On every `UILabel.setText:` / `UIButton.setTitle:forState:` / `UINavigationItem.setTitle:` call, the hook:
-   - Reads the master `enabled` switch from `com.viettweak.translate` (via CFPreferences).
-   - Looks up the original string in the merged translation map (bundled default + user JSON).
-   - Replaces the string if found; otherwise optionally logs the miss to `com.viettweak.misses.txt`.
-3. The translation map is loaded once and is reloadable at runtime via the "Tải lại bản dịch" button — no respring needed.
+| Tùy chọn | Tác dụng |
+| --- | --- |
+| Bật dịch | Công tắc chính |
+| Ghi log chi tiết | Ghi các chuỗi chưa dịch ra syslog |
+| Lưu chuỗi chưa dịch | Ghi các chuỗi chưa có bản dịch vào `com.viettweak.misses.txt` |
+| Tải lại bản dịch | Đọc lại từ điển, không cần respring |
+| Mở từ điển người dùng | Sao chép đường dẫn hoặc mở bằng Filza |
+| Đặt lại từ điển người dùng | Xóa từ điển người dùng, chỉ giữ bản dịch mặc định |
+| Khởi động lại giao diện | Respring |
 
-## Translation dictionary
+## Từ điển bản dịch
 
-Two sources, merged at load time (user overrides default):
+Có hai nguồn, được gộp khi tải (từ điển người dùng ghi đè từ điển mặc định):
 
-| File | Path | Purpose |
-| --- | --- | --- |
-| Bundled default | `/var/jb/Library/PreferenceBundles/VietTweakPrefs.bundle/translations.json` | ships with the tweak, ~100 common strings |
-| User overrides | `/var/jb/var/mobile/Library/Preferences/com.viettweak.user.json` | editable from the device via Filza / iFile / SSH |
+| Nguồn | Đường dẫn trên máy |
+| --- | --- |
+| Mặc định (đi kèm tweak) | `/var/jb/Library/PreferenceBundles/VietTweakPrefs.bundle/translations.json` |
+| Người dùng (tự sửa được) | `/var/jb/var/mobile/Library/Preferences/com.viettweak.user.json` |
 
-Format:
+Định dạng:
+
 ```json
 {
     "Enabled": "Đã bật",
@@ -50,98 +48,76 @@ Format:
 }
 ```
 
-### Discovering new strings to translate
+Nếu không tìm thấy khóa khớp chính xác, tweak sẽ thử khớp không phân biệt hoa thường.
 
-1. Open the VietTweak pane in Settings.
-2. Turn on **"Lưu chuỗi chưa dịch"**.
-3. Browse the preference panes of every other tweak installed on your device.
-4. Every untranslated string the hook sees gets appended to:
-   `/var/jb/var/mobile/Library/Preferences/com.viettweak.misses.txt`
-5. Copy entries from that file into `com.viettweak.user.json` with their Vietnamese translations.
-6. Tap **"Tải lại bản dịch"** in the VietTweak pane — translations apply immediately.
+### Thêm bản dịch cho tweak khác
+
+1. Trong **Cài đặt → VietTweak**, bật **"Lưu chuỗi chưa dịch"**.
+2. Mở trang cài đặt của các tweak muốn dịch.
+3. Các chuỗi chưa dịch được ghi vào `/var/jb/var/mobile/Library/Preferences/com.viettweak.misses.txt`.
+4. Chép chúng vào `com.viettweak.user.json` kèm bản dịch.
+5. Bấm **"Tải lại bản dịch"**, bản dịch có hiệu lực ngay.
+
+Muốn thêm bản dịch mặc định cho mọi người: sửa `translations.json` rồi gửi PR.
 
 ## Build
 
-### Option A — GitHub Actions (no local Theos needed)
+### GitHub Actions (không cần cài Theos)
 
-The repo ships with `.github/workflows/build.yml`. Just push to GitHub and CI builds the `.deb` for you:
+Mỗi lần push lên `main`, workflow `.github/workflows/build.yml` sẽ build file `.deb`. File nằm ở mục **Artifacts** của lần chạy (`VietTweak-deb`).
 
-1. Create a new GitHub repo (e.g. `VietTweak`).
-2. Push the project:
-   ```bash
-   cd VietTweak
-   git init
-   git add .
-   git commit -m "VietTweak 1.0.0"
-   git branch -M main
-   git remote add origin git@github.com:<your-user>/VietTweak.git
-   git push -u origin main
-   ```
-3. Open the **Actions** tab on GitHub → watch the **Build VietTweak** workflow run.
-4. When it finishes, click the run → scroll to **Artifacts** → download `VietTweak-deb` (a zip containing the `.deb`).
+Để tạo release: tăng `Version:` trong `control`, rồi gắn tag:
 
-To publish a release: tag a commit.
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+git tag v1.0.1
+git push origin v1.0.1
 ```
-CI auto-creates a GitHub Release named `VietTweak 1.0.0` with the `.deb` attached.
 
-The CI workflow:
-- runs on `ubuntu-latest`
-- installs clang, ldid, dpkg, fakeroot
-- clones Theos into a cache (so subsequent builds are fast)
-- downloads iPhoneOS16.5.sdk
-- runs `make package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless`
-- uploads `com.viettweak.translate_*.deb` as an artifact
-- on tag push, creates a GitHub Release with the `.deb` attached
+CI sẽ tự tạo GitHub Release kèm file `.deb`.
 
-### Option B — Local build (macOS / Linux / WSL)
+Workflow sẽ:
+- chạy trên `ubuntu-latest`
+- cài `ldid` (bản Procursus) và Theos, kèm iOS toolchain cho Linux
+- tải iPhoneOS16.5.sdk từ `theos/sdks`
+- chạy `make package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless`
 
-Requirements: Theos installed, iOS 15.5+ SDK (or whatever your `$THEOS_SDKS` provides), `dpkg-deb`.
+### Build trên máy (macOS / Linux / WSL)
+
+Cần cài sẵn [Theos](https://theos.dev/docs/installation) và iPhoneOS16.5.sdk trong `$THEOS/sdks`.
 
 ```bash
-cd VietTweak
 make package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless
 ```
 
-Output: `packages/com.viettweak.translate_1.0.0_iphoneos-arm64.deb`
+Kết quả: `packages/com.viettweak.translate_<version>_iphoneos-arm64.deb`
 
-See the **How to build** walkthrough in the chat docs for full setup steps (Xcode CLI tools, ldid, dpkg, SDK install).
+## Cấu trúc thư mục
 
-## Install
-
-```bash
-# Copy the .deb to the device, then:
-dpkg -i /var/jb/var/root/com.viettweak.translate_1.0.0_iphoneos-arm64.deb
-# Or push it through your package manager (Sileo / Zebra):
-#   - Sileo: drag-and-drop the .deb
-#   - or add a local file:// repo
+```
+VietTweak/
+├── Makefile                          # build tweak + bundle cài đặt (rootless)
+├── control                           # thông tin gói .deb
+├── VietTweak.plist                   # bộ lọc: chỉ nạp vào app Cài đặt
+├── Tweak.x                           # hook Logos + tra từ điển
+├── translations.json                 # từ điển Anh → Việt mặc định
+├── Preferences/
+│   ├── VRTRootListController.h/.x    # giao diện + các nút trong trang cài đặt
+│   └── VietTweakPrefs.plist          # dòng "VietTweak" trong Cài đặt
+└── Resources/
+    ├── Info.plist                    # khai báo bundle cài đặt
+    ├── VRTRootListController.plist   # danh sách mục trong trang cài đặt
+    └── VietTweakPrefs*.png           # icon 1x/2x/3x
 ```
 
-Then **respring**. A new **VietTweak** row appears in Settings.
+## Xử lý sự cố
 
-## Customisation
-
-### Add more default translations
-Edit `translations.json` at the project root before building. Keys are matched case-insensitively if the exact key isn't found.
-
-### Add an icon
-Drop a 29×29 / 58×58 `VietTweakPrefs.png` / `VietTweakPrefs@2x.png` into `Resources/`. The `Resources` folder is already declared in the Makefile via `VietTweakPrefs_RESOURCE_DIRS = Resources` and will be copied into `VietTweakPrefs.bundle`.
-
-### Change the prefs domain
-Search-and-replace `com.viettweak.translate` across `Tweak.x`, `VRTRootListController.plist`, and `control` if you want a different identifier.
-
-## Troubleshooting
-
-| Symptom | Fix |
+| Hiện tượng | Cách xử lý |
 | --- | --- |
-| No "VietTweak" row in Settings | Verify `PreferenceLoader` is installed. Respring. Check `/var/jb/Library/PreferenceLoader/Preferences/VietTweakPrefs.plist` exists on device. |
-| Strings not translated | Toggle the master switch off and on. Make sure the key in `translations.json` matches the exact string (case-insensitive fallback exists). |
-| Prefs pane is white/empty | Verify `VRTRootListController.plist` was bundled — open `VietTweakPrefs.bundle/` on device and check. |
-| `make package` fails on `Preferences` framework | Make sure your Theos SDK is iOS 15.5+. The private `Preferences.framework` headers must be present. |
-| Hooks not loading at all | Confirm the .plist filter path on device: `/var/jb/Library/MobileSubstrate/DynamicLibraries/VietTweak.plist` should list `com.apple.Preferences`. |
+| Không thấy dòng VietTweak trong Cài đặt | Kiểm tra đã cài PreferenceLoader, respring lại. |
+| Không dịch gì cả | Vào trang VietTweak, bật "Bật dịch" (mặc định đang tắt). |
+| Một số chuỗi không dịch | Bật "Lưu chuỗi chưa dịch" để xem chuỗi gốc chính xác, rồi thêm vào từ điển người dùng. |
+| Trang cài đặt trắng trơn | Kiểm tra `VietTweakPrefs.bundle/VRTRootListController.plist` có trên máy. |
 
-## Licence
+## Giấy phép
 
-MIT. Use it, fork it, ship your own variant.
+MIT.
