@@ -14,6 +14,9 @@ VietTweak translates the settings pages of your other jailbreak tweaks into Viet
 
 Add this source in Sileo or Zebra, then install **VietTweak**. Updates come through your package manager.
 
+[![Add to Sileo](https://img.shields.io/badge/Add%20to-Sileo-0A84FF?style=for-the-badge)](https://ductruongvu23.github.io/repo/#sileo)
+[![Add to Zebra](https://img.shields.io/badge/Add%20to-Zebra-111111?style=for-the-badge)](https://ductruongvu23.github.io/repo/#zebra)
+
 ```
 https://ductruongvu23.github.io/repo/
 ```
