@@ -31,7 +31,7 @@ include $(THEOS_MAKE_PATH)/bundle.mk
 # Install the entry plist into PreferenceLoader's lookup path so the tweak
 # shows up as a row in the root Settings list.
 internal-stage::
-	$(ECHO_NOTHING)mkdir -p $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceBundles/VietTweakPrefs.bundle
-	$(ECHO_NOTHING)cp translations.json $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceBundles/VietTweakPrefs.bundle/translations.json
-	$(ECHO_NOTHING)mkdir -p $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceLoader/Preferences
-	$(ECHO_NOTHING)cp Preferences/VietTweakPrefs.plist $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceLoader/Preferences/VietTweakPrefs.plist
+	$(ECHO_NOTHING)mkdir -p $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceBundles/VietTweakPrefs.bundle$(ECHO_END)
+	$(ECHO_NOTHING)cp translations.json $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceBundles/VietTweakPrefs.bundle/translations.json$(ECHO_END)
+	$(ECHO_NOTHING)mkdir -p $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceLoader/Preferences$(ECHO_END)
+	$(ECHO_NOTHING)cp Preferences/VietTweakPrefs.plist $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceLoader/Preferences/VietTweakPrefs.plist$(ECHO_END)
