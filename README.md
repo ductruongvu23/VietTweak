@@ -15,7 +15,7 @@ VietTweak translates the settings pages of your other jailbreak tweaks into Viet
 Add this source in Sileo or Zebra, then install **VietTweak**. Updates come through your package manager.
 
 ```
-https://ductruongvu23.github.io/VietTweak/
+https://ductruongvu23.github.io/repo/
 ```
 
 ### Manually
@@ -88,7 +88,7 @@ git tag v1.0.1
 git push origin v1.0.1
 ```
 
-CI creates a GitHub Release with the `.deb` attached, then rebuilds the APT repo from every release and deploys it to GitHub Pages (`repo` job). To rebuild the repo without a new tag, run the workflow manually from the Actions tab.
+CI creates a GitHub Release with the `.deb` attached. To ship it through the Sileo/Zebra source, upload that `.deb` to `debs/` in [ductruongvu23/repo](https://github.com/ductruongvu23/repo).
 
 The workflow:
 - runs on `ubuntu-latest`
