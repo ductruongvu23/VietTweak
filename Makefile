@@ -14,17 +14,15 @@ VietTweak_FILES = Tweak.x
 VietTweak_CFLAGS = -fobjc-arc -Wno-deprecated-declarations
 VietTweak_FRAMEWORKS = UIKit Foundation
 VietTweak_PRIVATE_FRAMEWORKS = Preferences
-VietTweak_LIBRARIES = colorpicker prefs
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 
 # Preference bundle ---------------------------------------------------------
 BUNDLE_NAME = VietTweakPrefs
-VietTweakPrefs_FILES = VRTRootListController.x
+VietTweakPrefs_FILES = Preferences/VRTRootListController.x
 VietTweakPrefs_CFLAGS = -fobjc-arc
 VietTweakPrefs_FRAMEWORKS = UIKit Foundation
 VietTweakPrefs_PRIVATE_FRAMEWORKS = Preferences
-VietTweakPrefs_LIBRARIES = colorpicker prefs
 VietTweakPrefs_INSTALL_PATH = /Library/PreferenceBundles
 VietTweakPrefs_RESOURCE_DIRS = Resources
 

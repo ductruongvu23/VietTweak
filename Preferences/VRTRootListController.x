@@ -10,6 +10,7 @@
 //   - about cell
 
 #import "VRTRootListController.h"
+#import <spawn.h>
 
 @interface VRTRootListController ()
 @end
@@ -112,7 +113,10 @@
 }
 
 - (void)respring {
-    system("killall -9 SpringBoard");
+    // system() is unavailable in the iOS SDK
+    pid_t pid;
+    const char *argv[] = {"killall", "-9", "SpringBoard", NULL};
+    posix_spawn(&pid, "/var/jb/usr/bin/killall", NULL, NULL, (char *const *)argv, NULL);
 }
 
 - (void)openGitHub {

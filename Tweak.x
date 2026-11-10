@@ -158,24 +158,7 @@ static NSString *VTRTranslate(NSString *input) {
     %orig(text);
 }
 
-%end
-
-// Buttons in spec cells use UIButton titleLabel — covers some tweak panes
-// that build custom cells with buttons (e.g. "Respring", "Apply").
-%hook UIButton
-
-- (void)setTitle:(NSString *)title forState:(UIControlState)state {
-    if ([title isKindOfClass:[NSString class]]) {
-        title = VTRTranslate(title);
-    }
-    %orig(title, state);
-}
-
-%end
-
 // Some preference cells render via attributed text — cover that path too.
-%hook UILabel
-
 - (void)setAttributedText:(NSAttributedString *)attributedText {
     if (attributedText.length > 0) {
         NSString *raw = attributedText.string;
@@ -188,6 +171,19 @@ static NSString *VTRTranslate(NSString *input) {
         }
     }
     %orig(attributedText);
+}
+
+%end
+
+// Buttons in spec cells use UIButton titleLabel — covers some tweak panes
+// that build custom cells with buttons (e.g. "Respring", "Apply").
+%hook UIButton
+
+- (void)setTitle:(NSString *)title forState:(UIControlState)state {
+    if ([title isKindOfClass:[NSString class]]) {
+        title = VTRTranslate(title);
+    }
+    %orig(title, state);
 }
 
 %end

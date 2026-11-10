@@ -21,7 +21,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/theos
-          key: theos-${{ runner.os }}-v2
+          key: theos-${{ runner.os }}-v3
           restore-keys: theos-${{ runner.os }}-
 
       - name: Install build dependencies
@@ -54,6 +54,13 @@ jobs:
           else
             (cd "$HOME/theos" && git pull --ff-only && git submodule update --init --recursive)
           fi
+          # Theos on Linux needs a separate iOS toolchain (clang/ld64)
+          if [ ! -x "$HOME/theos/toolchain/linux/iphone/bin/clang" ]; then
+            mkdir -p "$HOME/theos/toolchain"
+            curl -fsSL https://github.com/L1ghtmann/llvm-project/releases/latest/download/iOSToolchain-x86_64.tar.xz \
+              | tar -xJf - -C "$HOME/theos/toolchain"
+          fi
+          ls "$HOME/theos/toolchain/linux/iphone/bin/clang"
 
       - name: Install iOS 16.5 SDK
         run: |
@@ -80,7 +87,7 @@ jobs:
           mkdir -p artifacts
           find packages -maxdepth 1 -type f -name '*.deb' -exec cp {} artifacts/ \;
           # Also zip the .dsym-free dylib + bundle for inspection
-          (cd _/var/jb && zip -r "$GITHUB_WORKSPACE/artifacts/VietTweak-bundle.zip" .)
+          (cd .theos/_/var/jb && zip -r "$GITHUB_WORKSPACE/artifacts/VietTweak-bundle.zip" .)
           ls -la artifacts
 
       - name: Upload .deb artifact
